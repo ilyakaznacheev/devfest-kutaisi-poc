@@ -38,34 +38,17 @@ jobs:
         docker push us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
         docker push us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
 
+    - name: Create Service declearation   
+      run: |-
+        export IMAGE="us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest"
+        export SERVICE="${{ env.PROJECT_NAME }}"
+        envsubst < service.template.yaml > service.yaml
+
     - name: Deploy to Cloud Run
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
-        metadata: |-
-          apiVersion: serving.knative.dev/v1
-          kind: Service
-          metadata:
-            name: ${{ env.PROJECT_NAME }}
-            annotations:
-              run.googleapis.com/ingress: all
-              run.googleapis.com/ingress-status: all
-          spec:
-            template:
-              metadata:
-                annotations:
-                  autoscaling.knative.dev/maxScale: '1'
-                  autoscaling.knative.dev/minScale: '1'
-              spec:
-                containers:
-                - image: us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
-                  ports:
-                  - containerPort: 8080
-                    name: http1
-                  resources:
-                    limits:
-                      cpu: 1000m
-                      memory: 512Mi
+        metadata: service.yaml
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
