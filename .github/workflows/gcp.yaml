@@ -40,3 +40,10 @@ jobs:
         docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$TAG
         docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:latest
         docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$TAG
+
+    - name: Deploy to Cloud Run
+      id: 'deploy'
+      uses: 'google-github-actions/deploy-cloudrun@v0'
+      with:
+        service: 'hello-cloud-run'
+        image: '$IMAGE_NAME:latest'
