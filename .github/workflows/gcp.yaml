@@ -42,7 +42,7 @@ jobs:
       run: |-
         export IMAGE="us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest"
         export SERVICE="${{ env.PROJECT_NAME }}"
-        envsubst < service.template.yaml > service.yaml
+        envsubst < ./.github/specs/service.template.yaml > service.yaml
 
     - name: Deploy to Cloud Run
       id: 'deploy'
