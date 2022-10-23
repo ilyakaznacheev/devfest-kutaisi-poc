@@ -32,14 +32,14 @@ jobs:
         TAG: ${{ steps.commit.outputs.short }}
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |-
-        docker tag $GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$GITHUB_REPOSITORY:latest
-        docker tag $GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$GITHUB_REPOSITORY:$TAG
-        docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$GITHUB_REPOSITORY:latest
-        docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$GITHUB_REPOSITORY:$TAG
+        docker tag ${{ env.GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
+        docker tag ${{ env.GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
+        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
+        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
 
     - name: Deploy to Cloud Run
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
         service: 'kutaisi-poc'
-        image: us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$GITHUB_REPOSITORY:latest
+        image: 'us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest'
