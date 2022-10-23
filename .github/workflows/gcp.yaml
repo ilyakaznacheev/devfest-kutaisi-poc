@@ -42,8 +42,30 @@ jobs:
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
-        service: 'kutaisi-poc'
-        image: 'us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest'
+        metadata: |-
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          metadata:
+            name: kutaisi-poc
+            annotations:
+              run.googleapis.com/ingress: all
+              run.googleapis.com/ingress-status: all
+          spec:
+            template:
+              metadata:
+                annotations:
+                  autoscaling.knative.dev/maxScale: '1'
+                  autoscaling.knative.dev/minScale: '1'
+              spec:
+                containers:
+                - image: us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
+                  ports:
+                  - containerPort: 8080
+                    name: http1
+                  resources:
+                    limits:
+                      cpu: 1000m
+                      memory: 512Mi
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
