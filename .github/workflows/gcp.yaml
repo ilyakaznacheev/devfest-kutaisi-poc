@@ -13,6 +13,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Calculate Commit Hash
+      id: commit
+      uses: pr-mpt/actions-commit-hash@v1
+
     - uses: google-github-actions/setup-gcloud@v0
       with:
         service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
@@ -22,32 +26,17 @@ jobs:
     - name: Build Docker Image
       run: docker build -t $IMAGE_NAME:latest .
 
-    - name: Automatic Tagging of Releases
-      id: increment-git-tag
-      run: |
-        bash ./scripts/git_update.sh -v major
-
     - name: Configure Docker Client
       run: |-
         gcloud auth configure-docker --quiet
         gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
-    - name: Push Docker Image to Container Registry (GCR)
-      env:
-        GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      run: |-
-        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
-        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
-        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
-        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
-
     - name: Push Docker Image to Artifact Registry
       env:
-        GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        TAG: ${{ steps.commit.outputs.short }}
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |-
         docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:latest
-        docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$GIT_TAG
+        docker tag $IMAGE_NAME:latest us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$TAG
         docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:latest
-        docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$GIT_TAG
+        docker push us-central1-docker.pkg.dev/$PROJECT_ID/kutaisi-poc/$IMAGE_NAME:$TAG
