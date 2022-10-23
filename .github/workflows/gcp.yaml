@@ -7,6 +7,8 @@ jobs:
   build-push-gcr:
     name: Build and Push to GCP
     runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: kutaisi-poc
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -20,7 +22,7 @@ jobs:
         credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
 
     - name: Build Docker Image
-      run: docker build -t $GITHUB_REPOSITORY:latest .
+      run: docker build -t $PROJECT_NAME:latest .
 
     - name: Configure Docker Client
       run: |-
@@ -32,14 +34,14 @@ jobs:
         TAG: ${{ steps.commit.outputs.short }}
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |-
-        docker tag ${{ env.GITHUB_REPOSITORY }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
-        docker tag ${{ env.GITHUB_REPOSITORY }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
-        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
-        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
+        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
+        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
+        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
+        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
 
     - name: Deploy to Cloud Run
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
         service: 'kutaisi-poc'
-        image: 'us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest'
+        image: 'us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest'
