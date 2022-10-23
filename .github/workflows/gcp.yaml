@@ -46,7 +46,7 @@ jobs:
           apiVersion: serving.knative.dev/v1
           kind: Service
           metadata:
-            name: kutaisi-poc
+            name: ${{ env.PROJECT_NAME }}
             annotations:
               run.googleapis.com/ingress: all
               run.googleapis.com/ingress-status: all
