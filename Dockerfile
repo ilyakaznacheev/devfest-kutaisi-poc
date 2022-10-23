@@ -6,6 +6,10 @@ COPY go.* ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN go build -o /usr/local/bin/app ./...
+RUN CGO_ENABLED=0 go build -o /usr/local/bin/app
 
-CMD ["app"]
+FROM alpine:3.16
+
+COPY --from=builder /usr/local/bin/app /app
+
+CMD ["/app"]
