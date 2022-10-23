@@ -32,16 +32,18 @@ jobs:
     - name: Push Docker Image to Artifact Registry
       env:
         TAG: ${{ steps.commit.outputs.short }}
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |-
-        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
-        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
-        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
-        docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
+        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
+        docker tag ${{ env.PROJECT_NAME }}:latest us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
+        docker push us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest
+        docker push us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:${{ env.TAG }}
 
     - name: Deploy to Cloud Run
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
         service: 'kutaisi-poc'
-        image: 'us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest'
+        image: 'us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/kutaisi-poc/${{ env.PROJECT_NAME }}:latest'
+
+    - name: 'Use output'
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
