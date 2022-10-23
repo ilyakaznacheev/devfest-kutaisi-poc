@@ -32,8 +32,8 @@ jobs:
         TAG: ${{ steps.commit.outputs.short }}
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |-
-        docker tag ${{ env.GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
-        docker tag ${{ env.GITHUB_REPOSITORY:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
+        docker tag ${{ env.GITHUB_REPOSITORY }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
+        docker tag ${{ env.GITHUB_REPOSITORY }}:latest us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
         docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:latest
         docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/kutaisi-poc/${{ env.GITHUB_REPOSITORY }}:${{ env.TAG }}
 
