@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+	log.Println("starting application")
+
 	dbAddress := os.Getenv("DB_ADDRESS")
 	apiAddress := os.Getenv("API_ADDRESS")
 
@@ -33,7 +35,7 @@ func main() {
 		quit := make(chan os.Signal, 1)
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
-
+		log.Println("exiting application")
 		return srv.Stop()
 	})
 
