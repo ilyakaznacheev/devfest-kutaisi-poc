@@ -9,15 +9,20 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/maxScale: '1'
-        autoscaling.knative.dev/minScale: '1'
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-      - image: ${IMAGE}
-        ports:
-        - containerPort: 8080
-          name: http1
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 512Mi
+        - image: ${IMAGE}
+          ports:
+            - containerPort: 8080
+              name: http1
+          env:
+            - name: DB_ADDRESS
+              value: ${DB_ADDRESS}
+            - name: API_ADDRESS
+              value: ${API_ADDRESS}
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi

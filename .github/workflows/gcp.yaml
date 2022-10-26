@@ -45,6 +45,8 @@ jobs:
         run: |-
           export IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.PROJECT_NAME }}:latest"
           export SERVICE="${{ env.PROJECT_NAME }}"
+          export DB_ADDRESS="${{ secrets.DB_ADDRESS }}"
+          export API_ADDRESS="${{ secrets.API_ADDRESS }}"
           envsubst < ./.github/specs/service.template.yaml > service.yaml
 
       - name: Deploy to Cloud Run
