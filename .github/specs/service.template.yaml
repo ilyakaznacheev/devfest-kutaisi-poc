@@ -5,6 +5,7 @@ metadata:
   annotations:
     run.googleapis.com/ingress: all
     run.googleapis.com/ingress-status: all
+    run.googleapis.com/vpc-access-connector: ${CONNECTOR}
 spec:
   template:
     metadata:

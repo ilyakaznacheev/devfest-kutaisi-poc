@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: kutaisi-poc
+      CONNECTOR_NAME: kutaisi-poc
       REPO_NAME: kutaisi-poc
       REGION: us-central1
     steps:
@@ -47,6 +48,7 @@ jobs:
           export SERVICE="${{ env.PROJECT_NAME }}"
           export DB_ADDRESS="${{ secrets.DB_ADDRESS }}"
           export API_ADDRESS="${{ secrets.API_ADDRESS }}"
+          export CONNECTOR="projects/${{ env.PROJECT_NAME }}/locations/${{ env.REGION }}/connectors/${{ env.CONNECTOR_NAME }}"
           envsubst < ./.github/specs/service.template.yaml > service.yaml
 
       - name: Deploy to Cloud Run

@@ -25,6 +25,8 @@ func New(address string, repo WineRepository) *Server {
 		Addr: address,
 	}
 
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 
 	s := &Server{
