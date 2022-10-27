@@ -10,11 +10,12 @@ jobs:
     env:
       PROJECT_NAME: kutaisi-poc
       CONNECTOR_NAME: kutaisi-poc
-      REPO_NAME: kutaisi-poc
+      REPO_NAME: ${{ env.GITHUB_ACTOR }}
       REGION: us-central1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Calculate Commit Hash
         id: commit
         uses: pr-mpt/actions-commit-hash@v1
