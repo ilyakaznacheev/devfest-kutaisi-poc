@@ -8,8 +8,9 @@ jobs:
     name: Build and Push to GCP
     runs-on: ubuntu-latest
     env:
-      PROJECT_NAME: kutaisi-poc
+      PROJECT_NAME: ${{ github.ACTOR }}
       CONNECTOR_NAME: kutaisi-poc
+      REPO_NAME: kutaisi-poc
       REGION: us-central1
 
     steps:
@@ -36,7 +37,7 @@ jobs:
       - name: Push Docker Image to Artifact Registry
         env:
           TAG: ${{ steps.commit.outputs.short }}
-          IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ github.ACTOR }}/${{ env.PROJECT_NAME }}
+          IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.PROJECT_NAME }}
         run: |-
           docker tag ${{ env.PROJECT_NAME }}:latest ${{ env.IMAGE }}:latest
           docker tag ${{ env.PROJECT_NAME }}:latest ${{ env.IMAGE }}:${{ env.TAG }}
@@ -45,7 +46,7 @@ jobs:
 
       - name: Create Service declearation
         run: |-
-          export IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ github.ACTOR }}/${{ env.PROJECT_NAME }}:latest"
+          export IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.PROJECT_NAME }}:latest"
           export SERVICE="${{ env.PROJECT_NAME }}"
           export DB_ADDRESS="${{ secrets.DB_ADDRESS }}"
           export API_ADDRESS="${{ secrets.API_ADDRESS }}"
